@@ -6,7 +6,7 @@ class Api::V1::MoviesController < ApplicationController
   # GET /api/v1/movies
   def index
     page     = (params[:page]     || 1).to_i
-    per_page = (params[:per_page] || 12).to_i
+    per_page = (params[:per_page] || 10).to_i
 
     # 用 model 里的筛选方法
     movies = Movie.filter_by(params)
