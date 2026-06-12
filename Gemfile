@@ -58,5 +58,5 @@ group :development, :test do
   # HTML/XML解析工具
   gem "nokogiri"
   # aliyun oss
-  gem 'aliyun-sdk', '~> 0.3.0'
+  gem 'aliyun-sdk', '~> 0.8.0'
 end
