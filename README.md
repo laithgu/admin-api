@@ -98,10 +98,6 @@ bin/rails db:create
 # 执行迁移
 bin/rails db:migrate
 
-# 进入数据库控制台
-bin/rails dbconsole
-```
-
 ## 环境变量
 
 复制 `.env.example` 为 `.env`，填入配置：
