@@ -57,6 +57,5 @@ group :development, :test do
   gem "faraday_middleware"
   # HTML/XML解析工具
   gem "nokogiri"
-  # aliyun oss
-  gem 'aliyun-sdk', '~> 0.3.0'
+  gem 'aliyun-sdk', '~> 0.7'
 end

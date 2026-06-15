@@ -49,7 +49,7 @@
     <orderEntry type="library" scope="PROVIDED" name="builder (v3.3.0, ruby-3.4.4-p34) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="bundler (v4.0.13, ruby-3.4.4-p34) [gem]" level="application" />
     <orderEntry type="library" scope="TEST" name="bundler-audit (v0.9.3, ruby-3.4.4-p34) [gem]" level="application" />
-    <orderEntry type="library" scope="TEST" name="caxlsx (v4.5.0, ruby-3.4.4-p34) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="caxlsx (v4.5.0, ruby-3.4.4-p34) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="concurrent-ruby (v1.3.6, ruby-3.4.4-p34) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="connection_pool (v3.0.2, ruby-3.4.4-p34) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="crass (v1.0.6, ruby-3.4.4-p34) [gem]" level="application" />
@@ -116,7 +116,7 @@
     <orderEntry type="library" scope="PROVIDED" name="raabro (v1.4.0, ruby-3.4.4-p34) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="racc (v1.8.1, ruby-3.4.4-p34) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rack (v3.2.6, ruby-3.4.4-p34) [gem]" level="application" />
-    <orderEntry type="library" scope="TEST" name="rack-cors (v3.0.0, ruby-3.4.4-p34) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="rack-cors (v3.0.0, ruby-3.4.4-p34) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rack-session (v2.1.2, ruby-3.4.4-p34) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rack-test (v2.2.0, ruby-3.4.4-p34) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rackup (v2.3.1, ruby-3.4.4-p34) [gem]" level="application" />
