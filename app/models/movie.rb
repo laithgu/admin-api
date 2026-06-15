@@ -16,14 +16,23 @@ class Movie < ApplicationRecord
       movies = movies.where("name ILIKE ?", "%#{params[:keyword]}%")
     end
 
-    # 按分类筛选
+    # 按分类筛选：命中任意一个分类
     if params[:category].present?
-      movies = movies.where("? = ANY(categories)", params[:category])
+      # 去空
+      categories = Array(params[:category]).reject(&:blank?)
+      movies = movies.where(
+        "categories && ARRAY[?]::varchar[]",
+        categories
+      )
     end
 
-    # 按地区筛选
+    # 按地区筛选：命中任意一个地区
     if params[:region].present?
-      movies = movies.where("? = ANY(regions)", params[:region])
+      regions = Array(params[:region]).reject(&:blank?)
+      movies = movies.where(
+      "regions && ARRAY[?]::varchar[]",
+      regions
+      )
     end
 
     # 按导演筛选（模糊匹配）
