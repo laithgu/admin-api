@@ -32,6 +32,16 @@ class Api::V1::MoviesController < ApplicationController
     render json: { data: @movie }
   end
 
+  # 删除电影
+  # DELETE /api/v1/movies/:id
+  def destroy
+    movie = Movie.find(params[:id])
+    movie.destroy!
+    render json: { message: "删除成功" }
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: "电影不存在" }, status: :not_found
+  end
+
   # 导出Excel
   # GET /api/v1/movies/export
   def export
