@@ -5,7 +5,7 @@ class Api::V1::CommentsController < ApplicationController
     movie = Movie.find(params[:movie_id])
     comments = movie.comments.order(created_at: :desc)
 
-    render :json => comments
+    render json: { data: comments }
   rescue ActiveRecord::RecordNotFound
     render :json => { error: "电影不存在" }, status: :not_found
   end
@@ -17,7 +17,7 @@ class Api::V1::CommentsController < ApplicationController
     comment = movie.comments.new(comment_params)
 
     if comment.save
-      render :json => comment, status: :created
+      render json: { data: comment }, status: :created
     else
       render :json => { error: comment.errors.full_messages }, status: :unprocessable_entity
     end
