@@ -1,5 +1,3 @@
-require "aliyun/oss"
-
 # 阿里云 OSS 客户端
 module OssCenter
   class Client

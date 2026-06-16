@@ -12,8 +12,7 @@ Rails.application.routes.draw do
         end
       end
       # 下载中心
-      resources :downloads, only: [:index] do
-      end
+      resources :downloads, only: [ :index, :create ]
     end
   end
 end
