@@ -10,7 +10,10 @@ Rails.application.routes.draw do
         collection do
           get :export # 导出 Excel
         end
+        resources :comments, only: [ :index, :create ]
       end
+      # 删除评论用独立路由
+      resources :comments, only: [ :destroy ]
       # 下载中心
       resources :downloads, only: [ :index, :create ]
     end

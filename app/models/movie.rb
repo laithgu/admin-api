@@ -6,6 +6,7 @@ class Movie < ApplicationRecord
   validates :score,      numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 10 },
             allow_nil: true  # 评分0-10，可以为空
 
+  has_many :comments, dependent: :destroy
   # 根据筛选条件查询电影
   # 用法: Movie.filter_by(params)
   def self.filter_by(params)

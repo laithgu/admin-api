@@ -10,9 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_15_080813) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_16_025124) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "comments", force: :cascade do |t|
+    t.string "author"
+    t.text "content"
+    t.datetime "created_at", null: false
+    t.bigint "movie_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_comments_on_created_at"
+    t.index ["movie_id"], name: "index_comments_on_movie_id"
+  end
 
   create_table "downloads", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -170,6 +180,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_15_080813) do
     t.index ["key"], name: "index_solid_queue_semaphores_on_key", unique: true
   end
 
+  add_foreign_key "comments", "movies"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_claimed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_failed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
