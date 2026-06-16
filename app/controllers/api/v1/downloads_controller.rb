@@ -25,7 +25,7 @@ class Api::V1::DownloadsController < ApplicationController
     ExportJob.perform_later(download.id, params.to_unsafe_h)
 
     render json: { data: download }, status: :created
-  # rescue => e
-  #   render json: { error: e.message }, status: :internal_server_error
+  rescue => e
+    render json: { error: e.message }, status: :internal_server_error
   end
 end
