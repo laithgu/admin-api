@@ -3,9 +3,13 @@ class Api::V1::CommentsController < ApplicationController
   # GET /api/v1/movies/:movie_id/comments
   def index
     movie = Movie.find(params[:movie_id])
+    page = (params[:page] || 1).to_i
+    per_page = (params[:per_page] || 10).to_i
     comments = movie.comments.order(created_at: :desc)
+    total = comments.count
+    records = comments.offset((page - 1) * per_page).limit(per_page)
 
-    render json: { data: comments }
+    render json: { data: records ,meta: { total: total ,page: page, per_page: per_page } }
   rescue ActiveRecord::RecordNotFound
     render :json => { error: "电影不存在" }, status: :not_found
   end
