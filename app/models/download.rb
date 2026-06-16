@@ -1,7 +1,6 @@
 class Download < ApplicationRecord
+  enum :status, { pending: 0, completed: 1, failed: 2 }
   validates :name, presence: true
-  validates :url, presence: true
-
   def self.filter_by(params)
     downloads = all
 
