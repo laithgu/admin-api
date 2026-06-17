@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_17_051612) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_17_092339) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -30,8 +30,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_17_051612) do
     t.integer "status", default: 0, null: false
     t.datetime "updated_at", null: false
     t.string "url"
+    t.bigint "user_id"
     t.index ["created_at"], name: "index_downloads_on_created_at"
     t.index ["name"], name: "index_downloads_on_name"
+    t.index ["user_id"], name: "index_downloads_on_user_id"
   end
 
   create_table "movies", force: :cascade do |t|
@@ -194,6 +196,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_17_051612) do
   end
 
   add_foreign_key "comments", "movies"
+  add_foreign_key "downloads", "users"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_claimed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_failed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade

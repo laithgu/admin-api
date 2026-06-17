@@ -1,4 +1,6 @@
 class Api::V1::DownloadsController < ApplicationController
+  before_action :authenticate_user!, only: [:index, :create]
+
   # 获取下载列表
   # GET /api/v1/downloads
   def index
@@ -7,10 +9,12 @@ class Api::V1::DownloadsController < ApplicationController
 
     downloads = Download.filter_by(params)
     total = downloads.count
-    records = downloads.offset((page - 1) * per_page).limit(per_page)
+    records = downloads.includes(:user).offset((page - 1) * per_page).limit(per_page)
 
     render json: {
-      data: records,
+      data: records.as_json(include: {
+        user: { only: [:id, :name, :nickname, :email] }
+      }),
       meta: { total: total, page: page, per_page: per_page }
     }
   end
@@ -19,7 +23,7 @@ class Api::V1::DownloadsController < ApplicationController
   # POST /api/v1/downloads
   def create
     filename = "movies_#{Time.current.strftime('%Y%m%d%H%M%S')}.xlsx"
-    download = Download.create!(name: filename, status: :pending)
+    download = Download.create!(name: filename, status: :pending, user: current_user)
 
     # 放异步队列
     ExportJob.perform_later(download.id, params.to_unsafe_h)

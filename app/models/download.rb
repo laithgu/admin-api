@@ -1,4 +1,5 @@
 class Download < ApplicationRecord
+  belongs_to :user, optional: true
   enum :status, { pending: 0, completed: 1, failed: 2 }
   validates :name, presence: true
   def self.filter_by(params)
