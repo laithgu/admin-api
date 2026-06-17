@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_16_074022) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_17_051612) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -179,6 +179,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_16_074022) do
     t.index ["expires_at"], name: "index_solid_queue_semaphores_on_expires_at"
     t.index ["key", "value"], name: "index_solid_queue_semaphores_on_key_and_value"
     t.index ["key"], name: "index_solid_queue_semaphores_on_key", unique: true
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string "avatar"
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at"
+    t.string "email", null: false
+    t.string "name", null: false
+    t.string "nickname"
+    t.string "password_digest", null: false
+    t.integer "status", default: 0, null: false
+    t.datetime "updated_at", null: false
   end
 
   add_foreign_key "comments", "movies"

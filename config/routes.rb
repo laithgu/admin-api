@@ -16,6 +16,12 @@ Rails.application.routes.draw do
       resources :comments, only: [ :destroy ]
       # 下载中心
       resources :downloads, only: [ :index, :create ]
+      # 用户中心
+      resources :users, only: [ :index, :create ]
+      # 认证中心
+      post "auth/login", to: "auth#login"
+      post "auth/logout", to: "auth#logout"
+      get  "auth/me", to: "auth#me"
     end
   end
 end
