@@ -67,6 +67,7 @@ class Api::V1::AuthController < ApplicationController
   end
 
   private
+  # 颁发令牌对
   def issue_token_pair(user)
     refresh_jti = SecureRandom.uuid
 
