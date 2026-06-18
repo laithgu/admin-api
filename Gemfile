@@ -60,4 +60,6 @@ group :development, :test do
   gem "aliyun-sdk", "~> 0.7", require: "aliyun/oss"
   # JWT
   gem "jwt"
+  # redis
+  gem 'redis'
 end

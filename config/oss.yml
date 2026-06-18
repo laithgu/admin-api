@@ -1,0 +1,14 @@
+default: &default
+  endpoint:          <%= ENV.fetch("OSS_ENDPOINT", "https://oss-cn-beijing.aliyuncs.com") %>
+  access_key_id:     <%= ENV["OSS_ACCESS_KEY_ID"] %>
+  access_key_secret: <%= ENV["OSS_ACCESS_KEY_SECRET"] %>
+  bucket_name:       <%= ENV.fetch("OSS_BUCKET_NAME", "hwb-file") %>
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+production:
+  <<: *default

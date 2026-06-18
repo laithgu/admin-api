@@ -1,17 +1,26 @@
 # 阿里云 OSS 客户端
 module OssCenter
   class Client
-    BUCKET_NAME = "hwb-file"
+    CONFIG = Rails.application.config_for(:oss)
+
+    # 启动时校验关键配置
+    if CONFIG[:access_key_id].blank? || CONFIG[:access_key_secret].blank?
+      raise "OSS access keys missing — set OSS_ACCESS_KEY_ID and OSS_ACCESS_KEY_SECRET"
+    end
+
+    BUCKET_NAME = CONFIG[:bucket_name]
+
+    # 进程级共享 client / bucket —— 类加载时建立一次
+    SHARED_CLIENT = Aliyun::OSS::Client.new(
+      endpoint:          CONFIG[:endpoint],
+      access_key_id:     CONFIG[:access_key_id],
+      access_key_secret: CONFIG[:access_key_secret]
+    )
+    SHARED_BUCKET = SHARED_CLIENT.get_bucket(BUCKET_NAME)
 
     def initialize
-      # 创建 OSS 客户端
-      @client = Aliyun::OSS::Client.new(
-        endpoint: "https://oss-cn-beijing.aliyuncs.com",
-        access_key_id: ENV["OSS_ACCESS_KEY_ID"],
-        access_key_secret: ENV["OSS_ACCESS_KEY_SECRET"]
-      )
-      # 获取 bucket
-      @bucket = @client.get_bucket(BUCKET_NAME)
+      # 直接复用进程级共享 bucket，不再每次重新初始化 SDK
+      @bucket = SHARED_BUCKET
     end
 
     # 上传文件
@@ -20,10 +29,10 @@ module OssCenter
     # 返回：可访问的 URL
     def upload(file_path, object_key)
       @bucket.put_object(object_key, file: file_path)
-      "https://#{BUCKET_NAME}.oss-cn-beijing.aliyuncs.com/#{object_key}"
+      "https://#{BUCKET_NAME}.#{URI(CONFIG[:endpoint]).host}/#{object_key}"
     end
 
-    # 生成临时签名URL（因为我的试用oss创建的bucket是私有的）
+    # 生成临时签名 URL（私有 bucket 用）
     # expiry: 有效期，单位秒，默认 1 小时
     def signed_url(object_key, expiry: 3600)
       @bucket.object_url(object_key, true, expiry)
