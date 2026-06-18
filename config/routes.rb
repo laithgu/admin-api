@@ -21,6 +21,7 @@ Rails.application.routes.draw do
       # 认证中心
       post "auth/login", to: "auth#login"
       post "auth/logout", to: "auth#logout"
+      post "auth/refresh", to: "auth#refresh"
       get  "auth/me", to: "auth#me"
     end
   end

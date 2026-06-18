@@ -1,0 +1,12 @@
+default: &default
+  access_token_expires_in: <%= 30.minutes.to_i %>
+  refresh_token_expires_in: <%= 7.days.to_i %>
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+production:
+  <<: *default
