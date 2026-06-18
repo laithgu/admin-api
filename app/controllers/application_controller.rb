@@ -22,6 +22,11 @@ class ApplicationController < ActionController::API
       return
     end
 
+    unless result[:payload]["type"] == "access"
+      render json: { error: "token类型错误" }, status: :unauthorized
+      return
+    end
+
     @current_user = User.find_by(id: result[:payload]["user_id"])
 
     if @current_user.nil?
