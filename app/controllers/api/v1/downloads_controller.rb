@@ -26,10 +26,21 @@ class Api::V1::DownloadsController < ApplicationController
     download = Download.create!(name: filename, status: :pending, user: current_user)
 
     # 放异步队列
-    ExportJob.perform_later(download.id, params.to_unsafe_h)
+    ExportJob.perform_later(download.id, movie_filter_params)
 
     render json: { data: download }, status: :created
   rescue => e
     render json: { error: e.message }, status: :internal_server_error
+  end
+
+  private
+
+  # 仅放行 Movie.filter_by 真正用到的字段
+  def movie_filter_params
+    params.permit(
+      :keyword, :director, :actor, :score_min,
+      :duration_min, :duration_max, :year, :sort,
+      category: [], region: []
+    ).to_h
   end
 end

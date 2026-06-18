@@ -5,11 +5,8 @@ Rails.application.routes.draw do
   # API 接口，版本 v1
   namespace :api do
     namespace :v1 do
-      # 电影资源的 CRUD + 导出
+      # 电影资源的 CRUD（导出走 /downloads 异步队列）
       resources :movies, only: [:index, :show, :destroy] do
-        collection do
-          get :export # 导出 Excel
-        end
         resources :comments, only: [ :index, :create ]
       end
       # 删除评论用独立路由

@@ -42,20 +42,6 @@ class Api::V1::MoviesController < ApplicationController
     render json: { error: "电影不存在" }, status: :not_found
   end
 
-  # 导出Excel
-  # GET /api/v1/movies/export
-  def export
-    # 复用 model 里的筛选方法
-    movies = Movie.filter_by(params)
-
-    xlsx_data = MovieExporter.export(movies)
-
-    filename = "movies_#{Time.current.strftime('%Y%m%d%H%M%S')}.xlsx"
-    send_data xlsx_data,
-              filename: filename,
-              type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-  end
-
   private
 
   # 查找电影，找不到返回404

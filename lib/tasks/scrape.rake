@@ -1,25 +1,23 @@
 namespace :scrape do
-  # 开始爬取，默认1到10页
-  # 用法: rake scrape:ssr1[1,5]
-  task :ssr1, [ :start_page, :end_page ] => :environment do |t, args|
+  SCRAPE_JOB_CLASSES = %w[ScrapeListJob ScrapeDetailJob ScrapeAllJob].freeze
+
+  # 开始爬取，从某页开始，自动接力到没数据为止
+  # 用法:
+  #   rake scrape:ssr1         # 从第 1 页开始
+  #   rake scrape:ssr1[3]      # 从第 3 页开始
+  task :ssr1, [ :start_page ] => :environment do |_t, args|
     start_page = (args[:start_page] || 1).to_i
-    end_page   = (args[:end_page]   || 10).to_i
 
-    # 检查页数是否合法
-    if start_page < 1 || end_page < start_page
-      abort "无效的页数: #{start_page}..#{end_page}"
+    if start_page < 1
+      abort "无效的起始页数: #{start_page}"
     end
 
-    puts "开始爬取第 #{start_page} 到 #{end_page} 页"
+    puts "开始爬取，从第 #{start_page} 页起，自动跑到没数据为止"
+    ScrapeListJob.perform_later(start_page)
 
-    # 把每一页的爬取任务加到队列里
-    (start_page..end_page).each do |page_num|
-      ScrapeListJob.perform_later(page_num)
-    end
-
-    puts "任务已加入队列，请启动队列消费："
-    puts "  SCRAPE_PROXY=http://127.0.0.1:51234 SCRAPE_SKIP_SSL=1 bin/jobs"
     puts ""
+    puts "请确保队列已启动："
+    puts "  SCRAPE_PROXY=http://127.0.0.1:51234 SCRAPE_SKIP_SSL=1 bin/jobs"
     puts "查看进度："
     puts "  rake scrape:progress"
   end
@@ -27,8 +25,9 @@ namespace :scrape do
   # 查看爬取进度
   task progress: :environment do
     total_movies = Movie.count
-    pending_jobs = SolidQueue::Job.where(finished_at: nil).count
-    finished     = SolidQueue::Job.where.not(finished_at: nil).count
+    scrape_jobs  = SolidQueue::Job.where(class_name: SCRAPE_JOB_CLASSES)
+    pending_jobs = scrape_jobs.where(finished_at: nil).count
+    finished     = scrape_jobs.where.not(finished_at: nil).count
 
     puts "=" * 50
     puts "爬取进度"
@@ -47,8 +46,10 @@ namespace :scrape do
     end
 
     Movie.delete_all
-    SolidQueue::Job.delete_all
-    SolidQueue::ReadyExecution.delete_all
-    puts "清除完毕"
+    scrape_job_ids = SolidQueue::Job.where(class_name: SCRAPE_JOB_CLASSES).pluck(:id)
+    SolidQueue::ReadyExecution.where(job_id: scrape_job_ids).delete_all
+    SolidQueue::Job.where(id: scrape_job_ids).delete_all
+
+    puts "爬虫任务清除完毕"
   end
 end

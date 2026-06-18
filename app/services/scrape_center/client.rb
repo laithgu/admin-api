@@ -28,16 +28,26 @@ module ScrapeCenter
     end
 
     # 发 GET 请求，返回页面 HTML
+    # 按 HTTP 状态码分类抛错，让 Job 可以决定哪些重试、哪些不重试。
     def get(url)
       response = @conn.get(url)
+      status   = response.status
 
-      # 如果状态码不是 2xx，就报错
-      if !response.success?
-        raise "请求失败: HTTP #{response.status} for #{url}"
+      case status
+      when 200..299
+        response.body.force_encoding("UTF-8")
+      when 404
+        raise NotFoundError, "404: #{url}"
+      when 429
+        # 限流也归到 ServerError —— 走重试路径，但建议长 backoff
+        raise ServerError, "429 Too Many Requests: #{url}"
+      when 400..499
+        raise ClientError, "HTTP #{status}: #{url}"
+      when 500..599
+        raise ServerError, "HTTP #{status}: #{url}"
+      else
+        raise "未预期的状态码 #{status}: #{url}"
       end
-
-      # 强制 UTF-8 编码，防止乱码
-      response.body.force_encoding("UTF-8")
     end
   end
 end

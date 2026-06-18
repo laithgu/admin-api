@@ -4,10 +4,8 @@ class ExportJob < ApplicationJob
   retry_on StandardError, wait: :exponentially_longer, attempts: 3
 
   def perform(download_id, filter_params)
-    download = Download.find(download_id)
-    if download.nil?
-      return
-    end
+    download = Download.find_by(id: download_id)
+    return unless download
 
     # 1.生成 Excel
     movies = Movie.filter_by(filter_params)
