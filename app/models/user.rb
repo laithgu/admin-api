@@ -6,6 +6,7 @@ class User < ApplicationRecord
   # 3. 提供 authenticate 方法验证密码
   # 4. 防止数据库保存明文密码
   has_secure_password
+  has_many :notifications, dependent: :destroy
 
   enum :status, { active: 0, disabled: 1 }
   enum :role, { user: 0, admin: 1 }

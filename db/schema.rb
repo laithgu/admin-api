@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_22_015555) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_22_072450) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -60,6 +60,31 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_22_015555) do
     t.index ["published_at"], name: "index_movies_on_published_at"
     t.index ["regions"], name: "index_movies_on_regions", using: :gin
     t.index ["score"], name: "index_movies_on_score"
+  end
+
+  create_table "notifications", force: :cascade do |t|
+    t.text "body"
+    t.datetime "created_at", null: false
+    t.string "kind", null: false, comment: "通知类型 download_completed / download_failed"
+    t.datetime "read_at", comment: "已读时间，null=未读"
+    t.bigint "target_id", comment: "关联ID"
+    t.string "target_type", comment: "关联类型 Download / ..."
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["target_type", "target_id"], name: "index_notifications_on_target_type_and_target_id"
+    t.index ["user_id", "read_at"], name: "index_notifications_on_user_id_and_read_at"
+    t.index ["user_id"], name: "index_notifications_on_user_id"
+  end
+
+  create_table "solid_cable_messages", force: :cascade do |t|
+    t.binary "channel", null: false
+    t.bigint "channel_hash", null: false
+    t.datetime "created_at", null: false
+    t.binary "payload", null: false
+    t.index ["channel"], name: "index_solid_cable_messages_on_channel"
+    t.index ["channel_hash"], name: "index_solid_cable_messages_on_channel_hash"
+    t.index ["created_at"], name: "index_solid_cable_messages_on_created_at"
   end
 
   create_table "solid_queue_blocked_executions", force: :cascade do |t|
@@ -198,6 +223,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_22_015555) do
 
   add_foreign_key "comments", "movies"
   add_foreign_key "downloads", "users"
+  add_foreign_key "notifications", "users"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_claimed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_failed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
