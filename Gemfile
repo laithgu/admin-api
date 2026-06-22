@@ -62,4 +62,6 @@ group :development, :test do
   gem "jwt"
   # redis
   gem 'redis'
+  # 权限管理
+  gem "pundit"
 end

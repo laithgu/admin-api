@@ -8,6 +8,7 @@ class User < ApplicationRecord
   has_secure_password
 
   enum :status, { active: 0, disabled: 1 }
+  enum :role, { user: 0, admin: 1 }
 
   validates :name, presence: true, uniqueness: true
   validates :email, presence: true, uniqueness: true

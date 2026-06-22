@@ -1,15 +1,18 @@
 class Api::V1::DownloadsController < ApplicationController
-  before_action :authenticate_user!, only: [:index, :create]
+  before_action :authenticate_user!
 
   # 获取下载列表
   # GET /api/v1/downloads
   def index
+    authorize Download
+
     page     = (params[:page]     || 1).to_i
     per_page = (params[:per_page] || 12).to_i
 
-    downloads = Download.filter_by(params)
-    total = downloads.count
-    records = downloads.includes(:user).offset((page - 1) * per_page).limit(per_page)
+    # 普通用户只看自己；admin 看全部 —— 由 DownloadPolicy::Scope 决定
+    downloads = policy_scope(Download).filter_by(params)
+    total     = downloads.count
+    records   = downloads.includes(:user).offset((page - 1) * per_page).limit(per_page)
 
     render json: {
       data: records.as_json(include: {
@@ -19,13 +22,14 @@ class Api::V1::DownloadsController < ApplicationController
     }
   end
 
-  # 导出电影使用异步队列，然后初始化进去的数据只有文件名和pending状态
+  # 导出电影使用异步队列，初始化进去的数据只有文件名和pending状态
   # POST /api/v1/downloads
   def create
+    authorize Download
+
     filename = "movies_#{Time.current.strftime('%Y%m%d%H%M%S')}.xlsx"
     download = Download.create!(name: filename, status: :pending, user: current_user)
 
-    # 放异步队列
     ExportJob.perform_later(download.id, movie_filter_params)
 
     render json: { data: download }, status: :created

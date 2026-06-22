@@ -1,4 +1,6 @@
 class Api::V1::CommentsController < ApplicationController
+  before_action :authenticate_user!, only: [:create, :destroy]
+
   # 获取某部电影的评论
   # GET /api/v1/movies/:movie_id/comments
   def index
@@ -9,9 +11,9 @@ class Api::V1::CommentsController < ApplicationController
     total = comments.count
     records = comments.offset((page - 1) * per_page).limit(per_page)
 
-    render json: { data: records ,meta: { total: total ,page: page, per_page: per_page } }
+    render json: { data: records, meta: { total: total, page: page, per_page: per_page } }
   rescue ActiveRecord::RecordNotFound
-    render :json => { error: "电影不存在" }, status: :not_found
+    render json: { error: "电影不存在" }, status: :not_found
   end
 
   # 创建评论
@@ -23,20 +25,21 @@ class Api::V1::CommentsController < ApplicationController
     if comment.save
       render json: { data: comment }, status: :created
     else
-      render :json => { error: comment.errors.full_messages }, status: :unprocessable_entity
+      render json: { error: comment.errors.full_messages }, status: :unprocessable_entity
     end
   rescue ActiveRecord::RecordNotFound
-    render :json => { error: "电影不存在" }, status: :not_found
+    render json: { error: "电影不存在" }, status: :not_found
   end
 
   # 删除评论
   # DELETE /api/v1/comments/:id
   def destroy
     comment = Comment.find(params[:id])
+    authorize comment              # Pundit 鉴权入口；没这一行就根本不会触发comment_policy
     comment.destroy!
-    render :json => { message: "删除成功" }
+    render json: { message: "删除成功" }
   rescue ActiveRecord::RecordNotFound
-    render :json => { err: "评论不存在" }, status: :not_found
+    render json: { error: "评论不存在" }, status: :not_found
   end
 
   private

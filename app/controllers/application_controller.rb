@@ -1,9 +1,19 @@
 class ApplicationController < ActionController::API
+  # Pundit 全局启用 —— 控制器里随时可调 authorize / policy_scope
+  include Pundit::Authorization
+
+  # 鉴权失败，执行render_forbidden，返回json数据
+  rescue_from Pundit::NotAuthorizedError, with: :render_forbidden
+
   def current_user
     @current_user
   end
 
   private
+
+  def render_forbidden(_e)
+    render json: { error: "无权限" }, status: :forbidden
+  end
 
   def authenticate_user!
     Rails.logger.info "Authorization: #{request.headers['Authorization']}"
