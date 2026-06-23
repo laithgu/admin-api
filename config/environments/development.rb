@@ -26,8 +26,10 @@ Rails.application.configure do
   # Change to :null_store to avoid any caching.
   config.cache_store = :memory_store
 
-  # Store uploaded files on the local file system (see config/storage.yml for options).
-  config.active_storage.service = :local
+  # ActiveStorage 用阿里云 OSS（通过 S3 兼容协议，见 config/storage.yml）
+  config.active_storage.service = :oss
+  # URL 过期时间 —— 用户点链接后会有 1 小时窗口下载，足够
+  config.active_storage.urls_expire_in = 1.hour
 
   # Don't care if the mailer can't send.
   config.action_mailer.raise_delivery_errors = false
@@ -37,6 +39,11 @@ Rails.application.configure do
 
   # Set localhost to be used by links generated in mailer templates.
   config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
+
+  # ActiveStorage 生成 rails_blob_url 时需要知道 host（否则报错）
+  Rails.application.routes.default_url_options = { host: "localhost", port: 3000 }
+  # OSS 不支持覆盖 response-content-type 头，改用 proxy 模式让 Rails 代发文件
+  config.active_storage.resolve_model_to_route = :rails_storage_proxy
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log

@@ -1,5 +1,7 @@
 class Download < ApplicationRecord
   belongs_to :user, optional: true
+  # 关联的 Excel 文件，通过 ActiveStorage 传到 OSS
+  has_one_attached :file
   enum :status, { pending: 0, completed: 1, failed: 2 }
   validates :name, presence: true
   def self.filter_by(params)

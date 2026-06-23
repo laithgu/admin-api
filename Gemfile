@@ -64,4 +64,6 @@ group :development, :test do
   gem 'redis'
   # 权限管理
   gem "pundit"
+  # aws-sdk-s3
+  gem "aws-sdk-s3"
 end
